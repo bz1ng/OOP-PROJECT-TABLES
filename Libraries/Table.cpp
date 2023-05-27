@@ -1,7 +1,5 @@
 // В Open(), Save() и SaveAs() коментираният код е задаата по услоеив
 // направил съм файловете да се съхраняват в папка Files за по-лесно тестване
-// в Print() съм коментирал кода за принтиране на таблицата по условие на задачата (клетките да са разделени с "|")
-// оставил съм само малко по-хубав начин за принтиране на таблицата 😂
 #pragma once
 #include "Functions.cpp"
 #include "Cell.cpp"
@@ -14,6 +12,7 @@ class Table{
         Cell** cells;
         std::string name;
         std::string FilePath;
+        char view = '0';
 
     public:
     bool Open(std::string name /*string path*/ ){ // Opens a file and reads the data
@@ -155,125 +154,133 @@ class Table{
             }
         }
 
-        //THE PRETTY ONE 👇
-
-        std::cout << "╔"; // Prints top border row
-        for (int i = 0; i < columns + 1; i++){
-            for (int j = 0; j < MaxLen[i] + 2; j++){
-                std::cout << "═";
-            }
-            if (i != columns) std::cout << "╦";
-            else std::cout << "╗";
-        }
-        std::cout << std::endl;
-
-
-
-        for (int i = 0; i < columns + 1; i++){ // Prints column numbr row
-            if (i == 0) {
-                std::cout << "║";
-                for(int j = 0; j < MaxLen[i] + 2; j++) std::cout << " ";
-                std::cout << "║ ";
-            }else{
-                std::cout << "C" << i;
-                for (int j = 0; j < MaxLen[i] - NumberOfDigits(i) - 1; j++) { std::cout << " ";}
-                std::cout << " ║ ";
-            }
-        }
-        std::cout << std::endl;
-        
-
-        for (int i = 0; i < rows; i++){ 
-
-                std::cout << "╠"; // Prints the border between column number row and data
-                for (int j = 0; j < columns + 1; j++){
-                    for (int k = 0; k < MaxLen[j] + 2; k++)std::cout << "═";
-                    if (j != columns) std::cout << "╬";
-                    else std::cout << "╣";
-                }
-                std::cout << std::endl;
-
-                std::cout << "║ ";
-
-
-            for (int j = 0; j < columns + 1; j++){ // Prints the data
-                if (j == 0) std::cout << "R" << i + 1 ;
-                else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == false) {
-                    std::cout << cells[i][j - 1].getValue();
-                }else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == true){
-                    std::cout << "Error";
-                }else if(cells[i][j - 1].getType() == "string"){
-                    for (int k = 1; k < cells[i][j - 1].getData().length() - 1; k++){
-                        if ((cells[i][j - 1].getData()[k] == 92 && cells[i][j - 1].getData()[k+1] == '"') || (cells[i][j - 1].getData()[k] == 92 && cells[i][j - 1].getData()[k + 1] == 92)) {
-                            std::cout << cells[i][j - 1].getData()[k + 1];
-                            k++;
-                        }else std::cout << cells[i][j - 1].getData()[k];
-                    }
-                }else std::cout << cells[i][j - 1].getData();
-
-                if (j == 0){
-                    for (int k = 0; k < MaxLen[j] - NumberOfDigits(i+1) - 1; k++) std::cout << " ";
-                }else{
-                    for (int k = 0; k < MaxLen[j] - cells[i][j-1].getLength(); k++){ // prints spaces to make the table look nice
-                        std::cout << " ";
-                    }
-
-                }
-                std::cout << " ║ ";
-                
-
-            }
-            std::cout << std::endl;
-        }
-
-            std::cout << "╚"; // Prints bottom border row
+        if (view == '0'){
+            //THE PRETTY ONE 👇
+            std::cout << "╔"; // Prints top border row
             for (int i = 0; i < columns + 1; i++){
                 for (int j = 0; j < MaxLen[i] + 2; j++){
                     std::cout << "═";
                 }
-                if (i != columns) std::cout << "╩";
-                else std::cout << "╝";
+                if (i != columns) std::cout << "╦";
+                else std::cout << "╗";
             }
             std::cout << std::endl;
 
-        //THE WORKING ONE 👇
 
-        /*for (int i = 0; i < columns + 1; i++){ // Prints column numbr row
-            if (i == 0) {
-                for(int j = 0; j < MaxLen[i] + 2; j++) std::cout << " ";
-                std::cout << "| ";
-            }else{
-                std::cout << "C" << i;
-                for (int j = 0; j < MaxLen[i] - NumberOfDigits(i) - 1; j++) std::cout << " ";
-                std::cout << " | ";
-            }
-        }
 
-        std::cout << std::endl;
-        
-
-        for (int i = 0; i < rows; i++){ // Prints the data
-
-            for (int j = 0; j < columns + 1; j++){
-                if (j == 0) std::cout << " R" << i + 1 ; // Prints row number
-                else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == false) std::cout << cells[i][j - 1].getValue(); // Prints the value of the equation
-                else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == true) std::cout << "Error"; //print ERROR if there is something wrong with equation
-                else if(cells[i][j - 1].getType() == "string"){ // If the data is a string
-                    for (int k = 1; k < cells[i][j - 1].getData().length() - 1; k++){
-                        if ((cells[i][j - 1].getData()[k] != 92 && cells[i][j - 1].getData()[k+1] != '"') || (cells[i][j - 1].getData()[k] != 92 && cells[i][j - 1].getData()[k + 1] != 92)) std::cout << cells[i][j - 1].getData()[k];
-                    }
-                }else std::cout << cells[i][j - 1].getData(); // If the data is a number
-
-                if (j == 0){  // Prints the spaces to make table evenly spaced
-                    for (int k = 0; k < MaxLen[j] - NumberOfDigits(i+1) - 1; k++) std::cout << " ";
+            for (int i = 0; i < columns + 1; i++){ // Prints column numbr row
+                if (i == 0) {
+                    std::cout << "║";
+                    for(int j = 0; j < MaxLen[i] + 2; j++) std::cout << " ";
+                    std::cout << "║ ";
                 }else{
-                    for (int k = 0; k < MaxLen[j] - cells[i][j-1].getLength(); k++) std::cout << " ";
+                    std::cout << "C" << i;
+                    for (int j = 0; j < MaxLen[i] - NumberOfDigits(i) - 1; j++) { std::cout << " ";}
+                    std::cout << " ║ ";
                 }
-                std::cout << " | ";
             }
             std::cout << std::endl;
+            
+
+            for (int i = 0; i < rows; i++){ 
+
+                    std::cout << "╠"; // Prints the border between column number row and data
+                    for (int j = 0; j < columns + 1; j++){
+                        for (int k = 0; k < MaxLen[j] + 2; k++)std::cout << "═";
+                        if (j != columns) std::cout << "╬";
+                        else std::cout << "╣";
+                    }
+                    std::cout << std::endl;
+
+                    std::cout << "║ ";
+
+
+                for (int j = 0; j < columns + 1; j++){ // Prints the data
+                    if (j == 0) std::cout << "R" << i + 1 ;
+                    else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == false) {
+                        std::cout << cells[i][j - 1].getValue();
+                    }else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == true){
+                        std::cout << "Error";
+                    }else if(cells[i][j - 1].getType() == "string"){
+                        for (int k = 1; k < cells[i][j - 1].getData().length() - 1; k++){
+                            if ((cells[i][j - 1].getData()[k] == 92 && cells[i][j - 1].getData()[k+1] == '"') || (cells[i][j - 1].getData()[k] == 92 && cells[i][j - 1].getData()[k + 1] == 92)) {
+                                std::cout << cells[i][j - 1].getData()[k + 1];
+                                k++;
+                            }else std::cout << cells[i][j - 1].getData()[k];
+                        }
+                    }else std::cout << cells[i][j - 1].getData();
+
+                    if (j == 0){
+                        for (int k = 0; k < MaxLen[j] - NumberOfDigits(i+1) - 1; k++) std::cout << " ";
+                    }else{
+                        for (int k = 0; k < MaxLen[j] - cells[i][j-1].getLength(); k++){ // prints spaces to make the table look nice
+                            std::cout << " ";
+                        }
+
+                    }
+                    std::cout << " ║ ";
+                    
+
+                }
+                std::cout << std::endl;
+            }
+
+                std::cout << "╚"; // Prints bottom border row
+                for (int i = 0; i < columns + 1; i++){
+                    for (int j = 0; j < MaxLen[i] + 2; j++){
+                        std::cout << "═";
+                    }
+                    if (i != columns) std::cout << "╩";
+                    else std::cout << "╝";
+                }
+                std::cout << std::endl;
+
+        }else if (view == '1'){
+            //THE WORKING ONE 👇
+
+            for (int i = 0; i < columns + 1; i++){ // Prints column numbr row
+                if (i == 0) {
+                    for(int j = 0; j < MaxLen[i] + 2; j++) std::cout << " ";
+                    std::cout << "| ";
+                }else{
+                    std::cout << "C" << i;
+                    for (int j = 0; j < MaxLen[i] - NumberOfDigits(i) - 1; j++) std::cout << " ";
+                    std::cout << " | ";
+                }
+            }
+
+            std::cout << std::endl;
+            
+
+            for (int i = 0; i < rows; i++){ // Prints the data
+
+                for (int j = 0; j < columns + 1; j++){
+                    if (j == 0) std::cout << " R" << i + 1 ; // Prints row number
+                    else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == false) std::cout << cells[i][j - 1].getValue(); // Prints the value of the equation
+                    else if (cells[i][j - 1].getType() == "equation" && cells[i][j - 1].getError() == true) std::cout << "Error"; //print ERROR if there is something wrong with equation
+                    else if(cells[i][j - 1].getType() == "string"){ // If the data is a string
+                        for (int k = 1; k < cells[i][j - 1].getData().length() - 1; k++){
+                            if ((cells[i][j - 1].getData()[k] != 92 && cells[i][j - 1].getData()[k+1] != '"') || (cells[i][j - 1].getData()[k] != 92 && cells[i][j - 1].getData()[k + 1] != 92)) std::cout << cells[i][j - 1].getData()[k];
+                        }
+                    }else std::cout << cells[i][j - 1].getData(); // If the data is a number
+
+                    if (j == 0){  // Prints the spaces to make table evenly spaced
+                        for (int k = 0; k < MaxLen[j] - NumberOfDigits(i+1) - 1; k++) std::cout << " ";
+                    }else{
+                        for (int k = 0; k < MaxLen[j] - cells[i][j-1].getLength(); k++) std::cout << " ";
+                    }
+                    std::cout << " | ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
+
         }
-        std::cout << std::endl;*/
+    }
+
+    void SetView(char view){ // Sets the view of the table
+        if (view == '0' || view == '1') this->view = view;
+        else std::cout << view << " is not a valid view" << std::endl;
     }
 
     void SetData( std::string data, int row, int column){ // Sets data to a cell function
@@ -446,6 +453,7 @@ class Table{
         this -> rows = 0;
         this -> columns = 0;
         this -> name = "";
+        this -> view = '0';
     }
 
     ~Table(){ // Destructor
