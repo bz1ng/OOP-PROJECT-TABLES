@@ -21,7 +21,7 @@ int DecimalFinder(std::string data){ // Finds the number of the decimal points i
 
 bool IsThereChar(std::string data){ // Checks if there is a character in a string
     for (int i = 0; i < data.length(); i++){
-        if (data[i] >= 'a' && data[i] <= 'z' || (data[i] >= 'A' && data[i] <= 'Z' )) return true;
+        if (data[i] >= 'a' && data[i] <= 'z' || (data[i] >= 'A' && data[i] <= 'Z') || data[i] == 92 || (data[i] == '"' && i !=0 && i != data.length() - 1)) return true;
     }
     return false;
 }
