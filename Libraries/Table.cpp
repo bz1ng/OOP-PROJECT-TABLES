@@ -1,3 +1,7 @@
+// В Open(), Save() и SaveAs() коментираният код е задаата по услоеив
+// направил съм файловете да се съхраняват в папка Files за по-лесно тестване
+// в Print() съм коментирал кода за принтиране на таблицата по условие на задачата (клетките да са разделени с "|")
+// оставил съм само малко по-хубав начин за принтиране на таблицата 😂
 #pragma once
 #include "Functions.cpp"
 #include "Cell.cpp"
@@ -329,15 +333,32 @@ class Table{
             int COLUMN = StringCoordinateSplit(left).col; // Gets the column of the cell
             if (cells[ROW][COLUMN].getType() == "integer" || cells[ROW][COLUMN].getType() == "decimal") left = cells[ROW][COLUMN].getData(); // If the left side is a number it gives it the value of the number
             else if (cells[ROW][COLUMN].getType() == "equation") left = std::to_string(cells[ROW][COLUMN].getValue()); // If the left side is an equation it gives it the value of the equation
-            else if (cells[ROW][COLUMN].getType() == "string" || cells[ROW][COLUMN].getType() == "empty") left = "0"; // If the left side is a string it gives it the value of 0
+            else if (cells[ROW][COLUMN].getType() == "empty") left = "0"; // If the left side is empty it gives it the value of 0
+            else if (cells[ROW][COLUMN].getType() == "string" ){ // If the left side is a string
+                if (IsThereChar(cells[ROW][COLUMN].getData()) == false && DecimalFinder(cells[ROW][COLUMN].getData()) <= 1) {
+                    left = cells[ROW][COLUMN].getData();
+                    left.erase(0, 1);
+                    left.erase(left.length() - 1, 1);
+                }else left = "0";
+            }
         }
+        
         if (right[0] == 'R'){ // If the right side is a cell
             int ROW = StringCoordinateSplit(right).row; // Gets the row of the cell
             int COLUMN = StringCoordinateSplit(right).col;  // Gets the column of the cell
             if (cells[ROW][COLUMN].getType() == "integer" || cells[ROW][COLUMN].getType() == "decimal") right = cells[ROW][COLUMN].getData(); // If the right side is a number it gives it the value of the number
             else if (cells[ROW][COLUMN].getType() == "equation") right = std::to_string(cells[ROW][COLUMN].getValue()); // If the right side is an equation it gives it the value of the equation
-            else if (cells[ROW][COLUMN].getType() == "string" || cells[ROW][COLUMN].getType() == "empty") right = "0"; // If the right side is a string it give it the value of 0
+            else if (cells[ROW][COLUMN].getType() == "empty") right = "0"; // If the right side is empty it gives it the value of 0
+            else if (cells[ROW][COLUMN].getType() == "string" ){ // If the right side is a string
+                if (IsThereChar(cells[ROW][COLUMN].getData()) == false && DecimalFinder(cells[ROW][COLUMN].getData()) <= 1){
+                    right = cells[ROW][COLUMN].getData();
+                    right.erase(0, 1);
+                    right.erase(right.length() - 1, 1);
+                }
+                else right = "0";
+            }
         }
+
         if (left[0] >= '0' && left[0] <= '9' && right[0] >= '0' && right[0] <= '9'){ // If both sides are numbers
             if ( DecimalFinder(left) == 0 ) left += ".0"; // If the left side is an integer it adds .0 to it
             if ( DecimalFinder(right) == 0 ) right += ".0"; // If the right side is an integer it adds .0 to it
