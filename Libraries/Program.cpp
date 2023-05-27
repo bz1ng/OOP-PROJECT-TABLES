@@ -2,7 +2,7 @@
 #include <iostream>
 
 // help command text
-const std::string help = "\nCOMMANDS:\nopen <table name> - opens a table\nclose - closes the current table\nsave - saves the current table\nsaveas <table name> - saves the current table as <table name>\nhelp - prints this information\nexit - exits the program\nprint - prints the current table\ninfo <row> <col> - prints information about the cell at <row> <col>\nedit <row> <col> <new data> - edits the cell at <row> <col> with <new data>\n\nDATA TYPES:\nstring - \"<data>\" (use \\\" to type quotation mark and \\\\ to type backslash)\ndecimal - <data>\ninteger - <data>\nequation - =<data> (supported operations +, -, *, /, ^)\n";
+const std::string help = "\nCOMMANDS:\nopen <table name> - opens a table\nclose - closes the current table\nview <0 or 1> - changes the view of the table 1 - basic, 0 - more good looking one \nsave - saves the current table\nsaveas <table name> - saves the current table as <table name>\nhelp - prints this information\nexit - exits the program\nprint - prints the current table\ninfo <row> <col> - prints information about the cell at <row> <col>\nedit <row> <col> <new data> - edits the cell at <row> <col> with <new data>\n\nDATA TYPES:\nstring - \"<data>\" (use \\\" to type quotation mark and \\\\ to type backslash)\ndecimal - <data>\ninteger - <data>\nequation - =<data> (supported operations +, -, *, /, ^)\n";
 
 
 void Program(){ // Main function of the program
@@ -61,7 +61,13 @@ void Program(){ // Main function of the program
             table.SetData(command[3], int(ConvertToDouble(command[1])) - 1, int(ConvertToDouble(command[2])) - 1);
             table.Generate();
         }
-        else if (ToUpper(command[0]) == "EDIT" && isTableOpen == false) std::cout << "No table is open" << std::endl; // ERROR if the user wants to edit a cell but there is no open table
+        else if (ToUpper(command[0]) == "VIEW") { // If the user wants to change the view of the table
+                if (command[1] == "0" || command[1] == "1") {
+                    table.SetView(command[1][0]);
+                    std::cout << "View changed" << std::endl;
+                }else std::cout << command[1] << " is not a valid view" << std::endl;
+
+        }else if (ToUpper(command[0]) == "EDIT" && isTableOpen == false) std::cout << "No table is open" << std::endl; // ERROR if the user wants to edit a cell but there is no open table
         else if (ToUpper(command[0]) == "SAVE" && isTableOpen == true) table.Save(); // If the user wants to save the table
         else if (ToUpper(command[0]) == "SAVE" && isTableOpen == false) std::cout << "No table is open" << std::endl; // ERROR if the user wants to save but there is no open table
         else if (ToUpper(command[0]) == "SAVEAS" && isTableOpen == true) table.SaveAS(command[1]); // If the user wants to save the table as a new file
